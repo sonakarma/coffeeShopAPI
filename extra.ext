@@ -1,0 +1,42 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const path = require('path');
+var mongojs = require('mongojs')
+var db = mongojs('users', ['userDetails'])
+
+var app = express();
+	/*var logger = function (req, res, next) {
+		console.log('logging.........');
+		next();
+	}
+
+	app.use(logger);
+*/
+
+//To parse URL encoded data
+app.use(bodyParser.urlencoded({ extended: false }))
+
+//To parse json data
+app.use(bodyParser.json())
+
+app.get('/', function(req, res) {
+		// find everything
+	db.userDetails.find(function (err, docs) {
+		console.log(docs,'docs')
+		res.send(docs)
+	})
+})
+
+app.get('/home', function(req, res) {
+	res.send('welcome on home route')
+})
+
+app.get('/:id', function(req, res) {
+	res.send('The specified id is ' +req.params.id)
+})
+
+app.set('port', process.env.PORT || 3000)
+
+var server = app.listen(app.get('port'), function() {
+  console.log('server is started on port 3000')
+})
